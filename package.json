@@ -1,9 +1,9 @@
 {
   "name": "GPay-Vue",
-  "version": "1.00",
+  "version": "1.0.0",
   "description": "GPay-Vue",
   "author": "Godfnc <godfunc@outlook.com>",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
