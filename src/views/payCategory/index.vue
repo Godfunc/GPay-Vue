@@ -1,20 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" v-permission="'merchant:merchant:page'" clearable placeholder="商户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.code" v-permission="'merchant:merchant:page'" clearable placeholder="商户号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.status" v-permission="'merchant:merchant:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.name" v-permission="'merchant:payCategory:page'" clearable placeholder="渠道主类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.code" v-permission="'merchant:payCategory:page'" clearable placeholder="编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.status" v-permission="'merchant:payCategory:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
         <el-option key="1" label="启用" value="1" />
         <el-option key="0" label="停用" value="0" />
       </el-select>
-      <el-select v-model="listQuery.type" v-permission="'merchant:merchant:page'" placeholder="类型" clearable style="width: 90px" class="filter-item">
-        <el-option key="1" label="商户" value="1" />
-        <el-option key="2" label="代理" value="2" />
-      </el-select>
-      <el-button v-waves v-permission="'merchant:merchant:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves v-permission="'merchant:payCategory:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-permission="'merchant:merchant:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="'merchant:payCategory:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -31,7 +27,7 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="商户名" align="center">
+      <el-table-column label="名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -39,11 +35,6 @@
       <el-table-column label="编号" align="center">
         <template slot-scope="scope">
           {{ scope.row.code }}
-        </template>
-      </el-table-column>
-      <el-table-column label="类型" width="80" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type | typeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="状态" width="100" align="center">
@@ -63,8 +54,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="110" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="'merchant:merchant:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:merchant:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-permission="'merchant:payCategory:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:payCategory:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -74,32 +65,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="用户">
-          <el-select v-model="temp.userId" placeholder="请选择">
-            <el-option
-              v-for="item in userList"
-              :key="item.id"
-              :label="item.username"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="商户名" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" placeholder="商户名" />
         </el-form-item>
-        <el-form-item label="商户公钥" prop="publicKey">
-          <el-input v-model="temp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
+        <el-form-item label="编号" prop="code">
+          <el-input v-model="temp.code" placeholder="编号" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">
             <el-radio-button :label="1">启用</el-radio-button>
             <el-radio-button :label="0">停用</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-radio-group v-model="temp.type">
-            <el-radio-button :label="1">商户</el-radio-button>
-            <el-radio-button :label="2">代理</el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -116,8 +91,7 @@
 </template>
 
 <script>
-import { page, add, edit, remove } from '@/api/merchant'
-import { list } from '@/api/user'
+import { page, add, edit, remove } from '@/api/payCategory'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -129,13 +103,6 @@ export default {
         0: '停用'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      const typeMap = {
-        1: '商户',
-        2: '代理'
-      }
-      return typeMap[type]
     },
     statusTypeFilter(status) {
       const statusMap = {
@@ -151,7 +118,6 @@ export default {
         update: '修改',
         create: '新增'
       },
-      userList: undefined,
       dialogFormVisible: false,
       dialogStatus: '',
       list: undefined,
@@ -160,35 +126,30 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        type: undefined,
         status: undefined,
         name: undefined,
         code: undefined
       },
       temp: {
         id: undefined,
-        userId: undefined,
         name: undefined,
-        publicKey: undefined,
         status: undefined,
-        type: undefined
+        code: undefined
       },
       rules: {
-        userId: [{ required: true, message: '请选择关联的用户', trigger: 'blur' }],
         name: [{ required: true, message: '商户名不能为空', trigger: 'blur' }],
         status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '商户类型不能为空', trigger: 'blur' }]
+        code: [{ required: true, message: '编号不能为空', trigger: 'blur' }]
       }
     }
   },
   created() {
     this.fetchData()
-    this.getRoleData()
   },
   methods: {
     fetchData() {
       this.listLoading = true
-      page(this.listQuery.page, this.listQuery.limit, this.listQuery.type, this.listQuery.status, this.listQuery.name ? this.listQuery.name : undefined, this.listQuery.code ? this.listQuery.code : undefined).then(response => {
+      page(this.listQuery.page, this.listQuery.limit, this.listQuery.status, this.listQuery.name ? this.listQuery.name : undefined, this.listQuery.code ? this.listQuery.code : undefined).then(response => {
         if (response.data) {
           this.list = response.data.list
         }
@@ -200,19 +161,12 @@ export default {
       this.listQuery.page = 1
       this.fetchData()
     },
-    getRoleData() {
-      list().then(response => {
-        this.userList = response.data
-      })
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
-        userId: undefined,
         name: undefined,
-        publicKey: undefined,
         status: 1,
-        type: undefined
+        code: undefined
       }
     },
     handleCreate() {
@@ -225,11 +179,9 @@ export default {
     },
     setUpdateTemp(row) {
       this.temp.id = row.id
-      this.temp.userId = row.userId
       this.temp.name = row.name
-      this.temp.publicKey = row.publicKey
       this.temp.status = row.status
-      this.temp.type = row.type
+      this.temp.code = row.code
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
@@ -273,7 +225,7 @@ export default {
       })
     },
     deleteData(id) {
-      this.$confirm('确定删除该商户吗?', '警告', {
+      this.$confirm('确定删除该渠道主类吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
