@@ -104,6 +104,16 @@
         <el-form-item label="费率" prop="costRate">
           <el-input v-model="temp.costRate" placeholder="费率" />
         </el-form-item>
+        <el-form-item label="渠道主类">
+          <el-select v-model="temp.categoryIds" multiple placeholder="请选择渠道主类">
+            <el-option
+              v-for="item in categoryList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">
             <el-radio-button :label="1">启用</el-radio-button>
@@ -125,6 +135,8 @@
 
 <script>
 import { page, add, edit, remove } from '@/api/payChannel'
+import { list } from '@/api/payCategory'
+import { getByChannel } from '@/api/payCategoryChannel'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -155,6 +167,7 @@ export default {
       dialogStatus: '',
       list: undefined,
       listLoading: true,
+      categoryList: undefined,
       total: 0,
       listQuery: {
         page: 1,
@@ -173,7 +186,8 @@ export default {
         notifyUrl: undefined,
         payTypeInfo: undefined,
         logicalTag: undefined,
-        costRate: undefined
+        costRate: undefined,
+        categoryIds: undefined
       },
       rules: {
         name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
@@ -187,6 +201,7 @@ export default {
   },
   created() {
     this.fetchData()
+    this.getCategoryData()
   },
   methods: {
     fetchData() {
@@ -197,6 +212,11 @@ export default {
         }
         this.total = response.data.total
         this.listLoading = false
+      })
+    },
+    getCategoryData() {
+      list().then(response => {
+        this.categoryList = response.data
       })
     },
     handleFilter() {
@@ -214,8 +234,16 @@ export default {
         notifyUrl: undefined,
         payTypeInfo: undefined,
         logicalTag: undefined,
-        costRate: undefined
+        costRate: undefined,
+        categoryIds: undefined
       }
+    },
+    setCategoryIds(id) {
+      getByChannel(id).then(response => {
+        if (response.data) {
+          this.temp.categoryIds = response.data
+        }
+      })
     },
     handleCreate() {
       this.resetTemp()
@@ -236,9 +264,11 @@ export default {
       this.temp.payTypeInfo = row.payTypeInfo
       this.temp.logicalTag = row.logicalTag
       this.temp.costRate = row.costRate
+      this.temp.categoryIds = undefined
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
+      this.setCategoryIds(this.temp.id)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

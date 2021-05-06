@@ -8,6 +8,13 @@ export function page(page, limit, status, name, code) {
   })
 }
 
+export function list() {
+  return request({
+    url: '/payCategory/list',
+    method: 'get'
+  })
+}
+
 export function add(data) {
   return request({
     url: '/payCategory/add',
