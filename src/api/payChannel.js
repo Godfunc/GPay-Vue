@@ -8,6 +8,13 @@ export function page(page, limit, status, name, code) {
   })
 }
 
+export function list() {
+  return request({
+    url: '/payChannel/list',
+    method: 'get'
+  })
+}
+
 export function add(data) {
   return request({
     url: '/payChannel/add',

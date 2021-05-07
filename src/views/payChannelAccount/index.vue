@@ -1,16 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" v-permission="'merchant:payChannel:page'" clearable placeholder="渠道子类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.code" v-permission="'merchant:payChannel:page'" clearable placeholder="编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.status" v-permission="'merchant:payChannel:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.name" v-permission="'merchant:payChannelAccount:page'" clearable placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.channelCode" v-permission="'merchant:payChannelAccount:page'" clearable placeholder="渠道子类编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.accountCode" v-permission="'merchant:payChannelAccountA:page'" clearable placeholder="账号商户号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.status" v-permission="'merchant:payChannelAccount:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
         <el-option key="1" label="启用" value="1" />
         <el-option key="0" label="停用" value="0" />
       </el-select>
-      <el-button v-waves v-permission="'merchant:payChannel:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves v-permission="'merchant:payChannelAccount:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-permission="'merchant:payChannel:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="'merchant:payChannelAccount:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -32,29 +33,24 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="编号" align="center">
+      <el-table-column label="渠道编号" align="center">
         <template slot-scope="scope">
-          {{ scope.row.code }}
+          {{ scope.row.channelCode }}
         </template>
       </el-table-column>
-      <el-table-column label="下单网关" :show-overflow-tooltip="true" align="center">
+      <el-table-column label="商户号" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
-          {{ scope.row.createUrl }}
+          {{ scope.row.accountCode }}
         </template>
       </el-table-column>
-      <el-table-column label="通知地址" :show-overflow-tooltip="true" align="center">
+      <el-table-column label="权重" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
-          {{ scope.row.notifyUrl }}
+          {{ scope.row.weight }}
         </template>
       </el-table-column>
-      <el-table-column label="支付类型" :show-overflow-tooltip="true" align="center">
+      <el-table-column class-name="status-col" label="风控" width="100" align="center">
         <template slot-scope="scope">
-          {{ scope.row.payTypeInfo }}
-        </template>
-      </el-table-column>
-      <el-table-column label="费率" :show-overflow-tooltip="true" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.costRate }}
+          <el-tag :type="scope.row.riskType | riskTypeFilter">{{ scope.row.riskType | riskFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="状态" width="100" align="center">
@@ -69,8 +65,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="110" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="'merchant:payChannel:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:payChannel:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-permission="'merchant:payChannelAccount:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:payChannelAccount:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -84,35 +80,30 @@
           <el-input v-model="temp.name" placeholder="名称" />
         </el-form-item>
         <el-form-item label="编号" prop="code">
-          <el-input v-model="temp.code" placeholder="编号" />
+          <el-input v-model="temp.accountCode" placeholder="商户号" />
         </el-form-item>
-        <el-form-item label="下单网关" prop="createUrl">
-          <el-input v-model="temp.createUrl" placeholder="订单下单网关" />
+        <el-form-item label="密钥信息" prop="keyInfo">
+          <el-input v-model="temp.keyInfo" type="textarea" :rows="4" placeholder="商户下单密钥" />
         </el-form-item>
-        <el-form-item label="查询网关" prop="queryUrl">
-          <el-input v-model="temp.queryUrl" placeholder="订单查询网关" />
+        <el-form-item label="权重" prop="weight">
+          <el-input-number v-model="temp.weight" :min="0" :max="10" />
         </el-form-item>
-        <el-form-item label="通知地址" prop="notifyUrl">
-          <el-input v-model="temp.notifyUrl" placeholder="通知地址" />
-        </el-form-item>
-        <el-form-item label="支付类型" prop="payTypeInfo">
-          <el-input v-model="temp.payTypeInfo" placeholder="支付类型" />
-        </el-form-item>
-        <el-form-item label="逻辑标识" prop="logicalTag">
-          <el-input v-model="temp.logicalTag" placeholder="逻辑标识" />
-        </el-form-item>
-        <el-form-item label="费率" prop="costRate">
-          <el-input v-model="temp.costRate" placeholder="费率" />
-        </el-form-item>
-        <el-form-item label="渠道主类">
-          <el-select v-model="temp.categoryIds" multiple placeholder="请选择渠道主类">
+        <el-form-item label="渠道子类" prop="channelId">
+          <el-select v-model="temp.channelId" placeholder="请选择渠道子类">
             <el-option
-              v-for="item in categoryList"
+              v-for="item in channelList"
               :key="item.id"
               :label="item.name + '【' + item.code +'】'"
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="风控类型" prop="riskType">
+          <el-radio-group v-model="temp.riskType">
+            <el-radio-button :label="2">自定义</el-radio-button>
+            <el-radio-button :label="1">使用通道</el-radio-button>
+            <el-radio-button :label="0">不设置</el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">
@@ -134,9 +125,8 @@
 </template>
 
 <script>
-import { page, add, edit, remove } from '@/api/payChannel'
-import { list } from '@/api/payCategory'
-import { getByChannel } from '@/api/payCategoryChannel'
+import { page, add, edit, remove } from '@/api/payChannelAccount'
+import { list } from '@/api/payChannel'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -155,6 +145,22 @@ export default {
         0: 'danger'
       }
       return statusMap[status]
+    },
+    riskFilter(riskType) {
+      const riskTypeMap = {
+        2: '自定义',
+        1: '通道',
+        0: '未设置'
+      }
+      return riskTypeMap[riskType]
+    },
+    riskTypeFilter(riskType) {
+      const riskTypeMap = {
+        2: 'info',
+        1: 'Warning',
+        0: 'danger'
+      }
+      return riskTypeMap[riskType]
     }
   },
   data() {
@@ -167,46 +173,44 @@ export default {
       dialogStatus: '',
       list: undefined,
       listLoading: true,
-      categoryList: undefined,
+      channelList: undefined,
       total: 0,
       listQuery: {
         page: 1,
         limit: 10,
         status: undefined,
         name: undefined,
-        code: undefined
+        channelCode: undefined,
+        accountCode: undefined
       },
       temp: {
         id: undefined,
         name: undefined,
+        channelId: undefined,
+        accountCode: undefined,
         status: undefined,
-        code: undefined,
-        createUrl: undefined,
-        queryUrl: undefined,
-        notifyUrl: undefined,
-        payTypeInfo: undefined,
-        logicalTag: undefined,
-        costRate: undefined,
-        categoryIds: undefined
+        keyInfo: undefined,
+        weight: undefined,
+        riskType: undefined
       },
       rules: {
         name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
         status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
-        code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
-        createUrl: [{ required: true, message: '下单网关不能为空', trigger: 'blur' }],
-        logicalTag: [{ required: true, message: '逻辑标识不能为空', trigger: 'blur' }],
-        costRate: [{ required: true, message: '费率不能为空', trigger: 'blur' }]
+        channelId: [{ required: true, message: '渠道子类不能为空', trigger: 'blur' }],
+        accountCode: [{ required: true, message: '账号商户号不能为空', trigger: 'blur' }],
+        weight: [{ required: true, message: '权重不能为空', trigger: 'blur' }],
+        riskType: [{ required: true, message: '风控类型不能为空', trigger: 'blur' }]
       }
     }
   },
   created() {
     this.fetchData()
-    this.getCategoryData()
+    this.getChannelData()
   },
   methods: {
     fetchData() {
       this.listLoading = true
-      page(this.listQuery.page, this.listQuery.limit, this.listQuery.status, this.listQuery.name ? this.listQuery.name : undefined, this.listQuery.code ? this.listQuery.code : undefined).then(response => {
+      page(this.listQuery.page, this.listQuery.limit, this.listQuery.status, this.listQuery.channelCode ? this.listQuery.channelCode : undefined, this.listQuery.name ? this.listQuery.name : undefined, this.listQuery.accountCode ? this.listQuery.accountCode : undefined).then(response => {
         if (response.data) {
           this.list = response.data.list
         }
@@ -214,9 +218,9 @@ export default {
         this.listLoading = false
       })
     },
-    getCategoryData() {
+    getChannelData() {
       list().then(response => {
-        this.categoryList = response.data
+        this.channelList = response.data
       })
     },
     handleFilter() {
@@ -227,23 +231,13 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
+        channelId: undefined,
+        accountCode: undefined,
         status: 1,
-        code: undefined,
-        createUrl: undefined,
-        queryUrl: undefined,
-        notifyUrl: undefined,
-        payTypeInfo: undefined,
-        logicalTag: undefined,
-        costRate: undefined,
-        categoryIds: undefined
+        keyInfo: undefined,
+        weight: 1,
+        riskType: 0
       }
-    },
-    setCategoryIds(id) {
-      getByChannel(id).then(response => {
-        if (response.data) {
-          this.temp.categoryIds = response.data
-        }
-      })
     },
     handleCreate() {
       this.resetTemp()
@@ -256,19 +250,15 @@ export default {
     setUpdateTemp(row) {
       this.temp.id = row.id
       this.temp.name = row.name
+      this.temp.channelId = row.channelId
+      this.temp.accountCode = row.accountCode
       this.temp.status = row.status
-      this.temp.code = row.code
-      this.temp.createUrl = row.createUrl
-      this.temp.queryUrl = row.queryUrl
-      this.temp.notifyUrl = row.notifyUrl
-      this.temp.payTypeInfo = row.payTypeInfo
-      this.temp.logicalTag = row.logicalTag
-      this.temp.costRate = row.costRate
-      this.temp.categoryIds = undefined
+      this.temp.keyInfo = row.keyInfo
+      this.temp.weight = row.weight
+      this.temp.riskType = row.riskType
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
-      this.setCategoryIds(this.temp.id)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
