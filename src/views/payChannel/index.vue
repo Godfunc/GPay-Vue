@@ -80,6 +80,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
+        <el-form-item label="渠道主类">
+          <el-select v-model="temp.categoryIds" style="width:100%" multiple placeholder="请选择渠道主类">
+            <el-option
+              v-for="item in categoryList"
+              :key="item.id"
+              :label="item.name + '【' + item.code +'】'"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" placeholder="名称" />
         </el-form-item>
@@ -103,16 +113,6 @@
         </el-form-item>
         <el-form-item label="费率" prop="costRate">
           <el-input v-model="temp.costRate" placeholder="费率" />
-        </el-form-item>
-        <el-form-item label="渠道主类">
-          <el-select v-model="temp.categoryIds" multiple placeholder="请选择渠道主类">
-            <el-option
-              v-for="item in categoryList"
-              :key="item.id"
-              :label="item.name + '【' + item.code +'】'"
-              :value="item.id"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">

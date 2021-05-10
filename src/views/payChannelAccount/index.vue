@@ -76,6 +76,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
+        <el-form-item label="渠道子类" prop="channelId">
+          <el-select v-model="temp.channelId" style="width:100%" placeholder="请选择渠道子类">
+            <el-option
+              v-for="item in channelList"
+              :key="item.id"
+              :label="item.name + '【' + item.code +'】'"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" placeholder="名称" />
         </el-form-item>
@@ -87,16 +97,6 @@
         </el-form-item>
         <el-form-item label="权重" prop="weight">
           <el-input-number v-model="temp.weight" :min="0" :max="10" />
-        </el-form-item>
-        <el-form-item label="渠道子类" prop="channelId">
-          <el-select v-model="temp.channelId" placeholder="请选择渠道子类">
-            <el-option
-              v-for="item in channelList"
-              :key="item.id"
-              :label="item.name + '【' + item.code +'】'"
-              :value="item.id"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item label="风控类型" prop="riskType">
           <el-radio-group v-model="temp.riskType">
