@@ -312,7 +312,6 @@ export default {
       riskTemp: {
         id: undefined,
         channelId: undefined,
-        channelAccountId: undefined,
         dayAmountMax: undefined,
         oneAmountMax: undefined,
         oneAmountMin: undefined,
@@ -417,6 +416,7 @@ export default {
     },
     resetRiskTemp() {
       this.riskTemp.id = undefined
+      this.riskTemp.channelId = this.riskChannelId
       this.riskTemp.dayAmountMax = undefined
       this.riskTemp.oneAmountMax = undefined
       this.riskTemp.oneAmountMin = undefined
@@ -427,8 +427,7 @@ export default {
     },
     setRiskUpdateTemp(row) {
       this.riskTemp.id = row.id
-      this.riskTemp.channelId = this.riskChannelId
-      this.riskTemp.channelAccountId = row.channelAccountId
+      this.riskTemp.channelId = row.channelId
       this.riskTemp.dayAmountMax = row.dayAmountMax
       this.riskTemp.oneAmountMax = row.oneAmountMax
       this.riskTemp.oneAmountMin = row.oneAmountMin
