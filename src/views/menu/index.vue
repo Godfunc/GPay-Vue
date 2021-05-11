@@ -48,9 +48,9 @@
       <el-table-column prop="sort" label="排序" align="center" width="60" />
       <el-table-column label="操作" align="center" width="140" fixed="right">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.type == 1" v-permission="'mg:menu:add'" type="text" @click="handleCreate(scope.row.id)">新增</el-button>
-          <el-button v-permission="'mg:menu:edit'" type="text" @click="handleEdit(scope.row)">修改</el-button>
-          <el-button v-permission="'mg:menu:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-if="scope.row.type == 1" v-permission="'mg:menu:add'" style="color: #409eff;" type="text" @click="handleCreate(scope.row.id)">新增</el-button>
+          <el-button v-permission="'mg:menu:edit'" type="text" style="color: #67c23a;" @click="handleEdit(scope.row)">修改</el-button>
+          <el-button v-permission="'mg:menu:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

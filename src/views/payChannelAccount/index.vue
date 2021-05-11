@@ -65,8 +65,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="110" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="'merchant:payChannelAccount:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:payChannelAccount:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-permission="'merchant:payChannelAccount:edit'" style="color: #67c23a;" type="text" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:payChannelAccount:remove'" style="color: #f56c6c;" type="text" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
 

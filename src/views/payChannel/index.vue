@@ -69,9 +69,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="135" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="'merchant:payChannel:edit'" type="text" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:channelRisk:listByChannel'" type="text" @click="handlerRisk(scope.row.id)">风控</el-button>
-          <el-button v-permission="'merchant:channelRisk:remove'" type="text" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-permission="'merchant:payChannel:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:channelRisk:listByChannel'" type="text" style="color: #e6a23c;" @click="handlerRisk(scope.row.id)">风控</el-button>
+          <el-button v-permission="'merchant:channelRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -181,8 +181,8 @@
         <el-table-column property="createTime" label="创建时间" align="center" />
         <el-table-column label="操作" align="center" width="100" fixed="right">
           <template slot-scope="scope">
-            <el-button v-permission="'merchant:channelRisk:edit'" type="text" @click="handleRiskUpdate(scope.row)">修改</el-button>
-            <el-button v-permission="'merchant:channelRisk:remove'" type="text" @click="deleteRiskData(scope.row.id)">删除</el-button>
+            <el-button v-permission="'merchant:channelRisk:edit'" type="text" style="color: #67c23a;" @click="handleRiskUpdate(scope.row)">修改</el-button>
+            <el-button v-permission="'merchant:channelRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteRiskData(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
