@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" v-permission="'merchant:payChannel:page'" clearable placeholder="渠道子类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" v-permission="'merchant:payChannel:page'" clearable placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.code" v-permission="'merchant:payChannel:page'" clearable placeholder="编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.status" v-permission="'merchant:payChannel:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
         <el-option key="1" label="启用" value="1" />
