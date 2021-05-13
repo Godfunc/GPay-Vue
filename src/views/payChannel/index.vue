@@ -259,11 +259,10 @@ export default {
       return statusMap[status]
     },
     riskCommonFilter(val) {
-      console.log(val)
-      if (val === '-1') {
-        return '不限额'
-      } else {
+      if (val) {
         return val
+      } else {
+        return '不限额'
       }
     }
   },
@@ -329,9 +328,6 @@ export default {
         costRate: [{ required: true, message: '费率不能为空', trigger: 'blur' }]
       },
       riskRules: {
-        dayAmountMax: [{ required: true, message: '每日最大限额不能为空，-1表示不限额', trigger: 'blur' }],
-        oneAmountMax: [{ required: true, message: '单笔最大限额不能为空，-1表示不限额', trigger: 'blur' }],
-        oneAmountMin: [{ required: true, message: '单笔最小限额不能为空，-1表示不限额', trigger: 'blur' }],
         dayStartTime: [{ required: true, message: '交易开始时间不能为空', trigger: 'blur' }],
         dayEndTime: [{ required: true, message: '交易结束时间不能为空', trigger: 'blur' }],
         status: [{ required: true, message: '状态不能为空', trigger: 'blur' }]
@@ -436,6 +432,17 @@ export default {
       this.riskTemp.dayEndTime = row.dayEndTime
       this.riskTemp.status = row.status
     },
+    fixAmount() {
+      if (this.riskTemp.dayAmountMax === '') {
+        this.riskTemp.dayAmountMax = undefined
+      }
+      if (this.riskTemp.oneAmountMax === '') {
+        this.riskTemp.oneAmountMax = undefined
+      }
+      if (this.riskTemp.oneAmountMin === '') {
+        this.riskTemp.oneAmountMin = undefined
+      }
+    },
     handleRiskCreate() {
       this.resetRiskTemp()
       this.dialogRiskStatus = 'create'
@@ -453,9 +460,9 @@ export default {
       })
     },
     createRiskData() {
-      console.log(this.riskTemp)
       this.$refs['riskDataForm'].validate((valid) => {
         if (valid) {
+          this.fixAmount()
           riskAdd(this.riskTemp).then(response => {
             if (response.code === 0) {
               this.dialogRiskFormVisible = false
@@ -472,6 +479,7 @@ export default {
     updateRiskData() {
       this.$refs['riskDataForm'].validate((valid) => {
         if (valid) {
+          this.fixAmount()
           riskEdit(this.riskTemp).then(response => {
             if (response.code === 0) {
               this.dialogRiskFormVisible = false
@@ -513,7 +521,6 @@ export default {
       })
     },
     createData() {
-      console.log(this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           add(this.temp).then(response => {

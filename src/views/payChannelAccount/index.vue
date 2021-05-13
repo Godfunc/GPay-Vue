@@ -179,7 +179,7 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <el-dialog :title="RiskTextMap[dialogRiskStatus]" :visible.sync="dialogRiskFormVisible" width="40%">
+    <el-dialog :title="riskTextMap[dialogRiskStatus]" :visible.sync="dialogRiskFormVisible" width="40%">
       <el-form ref="riskDataForm" :rules="riskRules" :model="riskTemp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
         <el-form-item label="每日最大" prop="dayAmountMax">
           <el-input v-model="riskTemp.dayAmountMax" placeholder="每日最大限额" />
@@ -258,11 +258,10 @@ export default {
       return riskTypeMap[riskType]
     },
     riskCommonFilter(val) {
-      console.log(val)
-      if (val === '-1') {
-        return '不限额'
-      } else {
+      if (val) {
         return val
+      } else {
+        return '不限额'
       }
     },
     riskTypeFilter(riskType) {
@@ -280,7 +279,7 @@ export default {
         update: '修改',
         create: '新增'
       },
-      RiskTextMap: {
+      riskTextMap: {
         update: '修改',
         create: '新增'
       },
@@ -336,9 +335,6 @@ export default {
         riskType: [{ required: true, message: '风控类型不能为空', trigger: 'blur' }]
       },
       riskRules: {
-        dayAmountMax: [{ required: true, message: '每日最大限额不能为空，-1表示不限额', trigger: 'blur' }],
-        oneAmountMax: [{ required: true, message: '单笔最大限额不能为空，-1表示不限额', trigger: 'blur' }],
-        oneAmountMin: [{ required: true, message: '单笔最小限额不能为空，-1表示不限额', trigger: 'blur' }],
         dayStartTime: [{ required: true, message: '交易开始时间不能为空', trigger: 'blur' }],
         dayEndTime: [{ required: true, message: '交易结束时间不能为空', trigger: 'blur' }],
         status: [{ required: true, message: '状态不能为空', trigger: 'blur' }]
@@ -431,6 +427,17 @@ export default {
       this.riskTemp.dayEndTime = row.dayEndTime
       this.riskTemp.status = row.status
     },
+    fixAmount() {
+      if (this.riskTemp.dayAmountMax === '') {
+        this.riskTemp.dayAmountMax = undefined
+      }
+      if (this.riskTemp.oneAmountMax === '') {
+        this.riskTemp.oneAmountMax = undefined
+      }
+      if (this.riskTemp.oneAmountMin === '') {
+        this.riskTemp.oneAmountMin = undefined
+      }
+    },
     handleRiskCreate() {
       this.resetRiskTemp()
       this.dialogRiskStatus = 'create'
@@ -451,6 +458,7 @@ export default {
       console.log(this.riskTemp)
       this.$refs['riskDataForm'].validate((valid) => {
         if (valid) {
+          this.fixAmount()
           riskAdd(this.riskTemp).then(response => {
             if (response.code === 0) {
               this.dialogRiskFormVisible = false
@@ -467,6 +475,7 @@ export default {
     updateRiskData() {
       this.$refs['riskDataForm'].validate((valid) => {
         if (valid) {
+          this.fixAmount()
           riskEdit(this.riskTemp).then(response => {
             if (response.code === 0) {
               this.dialogRiskFormVisible = false
