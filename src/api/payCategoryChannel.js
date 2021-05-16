@@ -6,3 +6,10 @@ export function getByChannel(channelId) {
     method: 'get'
   })
 }
+
+export function list() {
+  return request({
+    url: '/payCategoryChannel/list/',
+    method: 'get'
+  })
+}

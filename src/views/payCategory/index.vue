@@ -225,7 +225,7 @@ export default {
       })
     },
     deleteData(id) {
-      this.$confirm('确定删除该渠道主类吗?', '警告', {
+      this.$confirm('确定删除该渠道主类吗?该渠道关联的商户费率等数据也将被删除', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
