@@ -61,9 +61,10 @@
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="110" fixed="right">
+      <el-table-column label="操作" align="center" width="171" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="'merchant:merchant:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:merchant:keys'" type="text" style="color: #409eff;" @click="handleKeys(scope.row)">密钥</el-button>
           <el-button v-permission="'merchant:merchantRisk:list'" type="text" style="color: #e6a23c;" @click="handlerRisk(scope.row.code)">风控</el-button>
           <el-button v-permission="'merchant:merchant:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
@@ -145,8 +146,8 @@
         <el-table-column property="createTime" label="创建时间" align="center" />
         <el-table-column label="操作" align="center" width="100" fixed="right">
           <template slot-scope="scope">
-            <el-button v-permission="'merchant:channelRisk:edit'" type="text" style="color: #67c23a;" @click="handleRiskUpdate(scope.row)">修改</el-button>
-            <el-button v-permission="'merchant:channelRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteRiskData(scope.row.id)">删除</el-button>
+            <el-button v-permission="'merchant:merchantRisk:edit'" type="text" style="color: #67c23a;" @click="handleRiskUpdate(scope.row)">修改</el-button>
+            <el-button v-permission="'merchant:merchantRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteRiskData(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -188,6 +189,53 @@
           确认
         </el-button>
       </div>
+    </el-dialog>
+    <el-dialog title="风控" :visible.sync="dialogRiskVisible" width="60%">
+      <el-button size="small" style="margin-bottom: 5px;" class="filter-item" type="primary" icon="el-icon-edit" @click="handleRiskCreate">
+        新增
+      </el-button>
+      <el-table
+        v-loading="riskLoading"
+        :data="riskList"
+        element-loading-text="Loading"
+        border
+        fit
+      >
+        <el-table-column label="单笔最大" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.oneAmountMax | riskCommonFilter }}
+          </template>
+        </el-table-column>
+        <el-table-column label="单笔最小" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.oneAmountMin | riskCommonFilter }}
+          </template>
+        </el-table-column>
+        <el-table-column property="dayStartTime" label="开始时间" align="center" />
+        <el-table-column property="dayEndTime" label="结束时间" align="center" />
+        <el-table-column class-name="status-col" label="状态" align="center">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column property="createTime" label="创建时间" align="center" />
+        <el-table-column label="操作" align="center" width="100" fixed="right">
+          <template slot-scope="scope">
+            <el-button v-permission="'merchant:merchantRisk:edit'" type="text" style="color: #67c23a;" @click="handleRiskUpdate(scope.row)">修改</el-button>
+            <el-button v-permission="'merchant:merchantRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteRiskData(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+    <el-dialog title="公钥" :visible.sync="dialogKeyFormVisible" width="40%">
+      <el-form :model="keyTemp" label-position="left">
+        <el-form-item label="商户公钥" prop="publicKey">
+          <el-input v-model="keyTemp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
+        </el-form-item>
+        <el-form-item label="平台公钥" prop="platPublicKey">
+          <el-input v-model="keyTemp.platPublicKey" type="textarea" :rows="4" placeholder="平台公钥" />
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -243,6 +291,7 @@ export default {
       merchantCode: undefined,
       userList: undefined,
       dialogFormVisible: false,
+      dialogKeyFormVisible: false,
       dialogStatus: '',
       dialogRiskFormVisible: false,
       dialogRiskVisible: false,
@@ -276,6 +325,10 @@ export default {
         dayStartTime: undefined,
         dayEndTime: undefined,
         status: undefined
+      },
+      keyTemp: {
+        publicKey: undefined,
+        platPublicKey: undefined
       },
       rules: {
         userId: [{ required: true, message: '请选择关联的用户', trigger: 'blur' }],
@@ -339,6 +392,11 @@ export default {
       this.temp.publicKey = row.publicKey
       this.temp.status = row.status
       this.temp.type = row.type
+    },
+    handleKeys(row) {
+      this.keyTemp.publicKey = row.publicKey
+      this.keyTemp.platPublicKey = row.platPublicKey
+      this.dialogKeyFormVisible = true
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
