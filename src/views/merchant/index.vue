@@ -77,7 +77,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
         <el-form-item label="用户">
-          <el-select v-model="temp.userId" placeholder="请选择">
+          <el-select v-model="temp.userId" :disabled="dialogStatus == 'update'" placeholder="请选择">
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -99,7 +99,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="类型" prop="type">
-          <el-radio-group v-model="temp.type">
+          <el-radio-group v-model="temp.type" :disabled="dialogStatus == 'update'">
             <el-radio-button :label="1">商户</el-radio-button>
             <el-radio-button :label="2">代理</el-radio-button>
           </el-radio-group>
