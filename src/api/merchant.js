@@ -8,6 +8,13 @@ export function page(page, limit, type, status, name, code) {
   })
 }
 
+export function list(type) {
+  return request({
+    url: `/merchant/list/${type}`,
+    method: 'get'
+  })
+}
+
 export function keys(id) {
   return request({
     url: `/merchant/keys/${id}`,
@@ -15,11 +22,10 @@ export function keys(id) {
   })
 }
 
-export function refreshKeys(data) {
+export function refreshKeys(id) {
   return request({
-    url: '/merchant/refreshKeys',
-    method: 'post',
-    data
+    url: `/merchant/refreshKeys/${id}`,
+    method: 'post'
   })
 }
 

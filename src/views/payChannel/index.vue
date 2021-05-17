@@ -336,7 +336,6 @@ export default {
   },
   created() {
     this.fetchData()
-    this.getCategoryData()
   },
   methods: {
     fetchData() {
@@ -348,6 +347,7 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+      this.getCategoryData()
     },
     getCategoryData() {
       list().then(response => {

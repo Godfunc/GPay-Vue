@@ -76,8 +76,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="用户">
-          <el-select v-model="temp.userId" :disabled="dialogStatus == 'update'" placeholder="请选择">
+        <el-form-item label="用户" prop="userId">
+          <el-select v-model="temp.userId" no-data-text="请先去【用户管理】创建用户" style="width: 100%" :disabled="dialogStatus == 'update'" placeholder="用户">
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -86,11 +86,18 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="代理" prop="agentId">
+          <el-select v-model="temp.agentId" style="width: 100%" :disabled="dialogStatus == 'update'" placeholder="请选择代理商户">
+            <el-option
+              v-for="item in agentList"
+              :key="item.id"
+              :label="item.name + '【' + item.code + '】'"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="商户名" prop="name">
           <el-input v-model="temp.name" placeholder="商户名" />
-        </el-form-item>
-        <el-form-item label="商户公钥" prop="publicKey">
-          <el-input v-model="temp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">
@@ -103,6 +110,9 @@
             <el-radio-button :label="1">商户</el-radio-button>
             <el-radio-button :label="2">代理</el-radio-button>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item v-show="temp.type == 1" label="商户公钥" prop="publicKey">
+          <el-input v-model="temp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -236,13 +246,18 @@
           <el-input v-model="keyTemp.platPublicKey" type="textarea" :rows="4" placeholder="平台公钥" />
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button v-permission="'merchant:merchant:refreshKeys'" type="primary" @click="refreshPlatKeys(keyTemp.id)">
+          刷新密钥
+        </el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { page, add, edit, remove } from '@/api/merchant'
-import { list } from '@/api/user'
+import { page, list, add, edit, remove, refreshKeys } from '@/api/merchant'
+import { list as getUserList } from '@/api/user'
 import { riskList, riskAdd, riskEdit, riskRemove } from '@/api/merchantRisk'
 import Pagination from '@/components/Pagination'
 
@@ -297,6 +312,7 @@ export default {
       dialogRiskVisible: false,
       dialogRiskStatus: '',
       riskList: undefined,
+      agentList: undefined,
       riskLoading: true,
       list: undefined,
       listLoading: true,
@@ -311,6 +327,7 @@ export default {
       },
       temp: {
         id: undefined,
+        agentId: undefined,
         userId: undefined,
         name: undefined,
         publicKey: undefined,
@@ -327,6 +344,7 @@ export default {
         status: undefined
       },
       keyTemp: {
+        id: undefined,
         publicKey: undefined,
         platPublicKey: undefined
       },
@@ -345,7 +363,6 @@ export default {
   },
   created() {
     this.fetchData()
-    this.getRoleData()
   },
   methods: {
     fetchData() {
@@ -357,24 +374,44 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+      this.getRoleData()
+      this.getAgentList()
+    },
+    refreshPlatKeys(id) {
+      refreshKeys(id).then(response => {
+        if (response.code === 0) {
+          this.fetchData()
+          this.dialogKeyFormVisible = false
+          this.$message({
+            type: 'success',
+            message: '刷新成功!'
+          })
+        }
+      })
     },
     handleFilter() {
       this.listQuery.page = 1
       this.fetchData()
     },
     getRoleData() {
-      list().then(response => {
+      getUserList().then(response => {
         this.userList = response.data
+      })
+    },
+    getAgentList() {
+      list(2).then(response => {
+        this.agentList = response.data
       })
     },
     resetTemp() {
       this.temp = {
         id: undefined,
+        agentId: undefined,
         userId: undefined,
         name: undefined,
         publicKey: undefined,
         status: 1,
-        type: undefined
+        type: 1
       }
     },
     handleCreate() {
@@ -387,6 +424,7 @@ export default {
     },
     setUpdateTemp(row) {
       this.temp.id = row.id
+      this.temp.agentId = row.agentId
       this.temp.userId = row.userId
       this.temp.name = row.name
       this.temp.publicKey = row.publicKey
@@ -396,6 +434,7 @@ export default {
     handleKeys(row) {
       this.keyTemp.publicKey = row.publicKey
       this.keyTemp.platPublicKey = row.platPublicKey
+      this.keyTemp.id = row.id
       this.dialogKeyFormVisible = true
     },
     handleupdate(row) {
@@ -510,7 +549,6 @@ export default {
       })
     },
     createData() {
-      console.log(this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           add(this.temp).then(response => {

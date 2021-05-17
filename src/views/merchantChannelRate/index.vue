@@ -148,7 +148,6 @@ export default {
   },
   created() {
     this.fetchData()
-    this.getChannel()
   },
   methods: {
     fetchData() {
@@ -160,6 +159,7 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+      this.getChannel()
     },
     handleFilter() {
       this.listQuery.page = 1

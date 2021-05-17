@@ -343,7 +343,6 @@ export default {
   },
   created() {
     this.fetchData()
-    this.getChannelData()
   },
   methods: {
     fetchData() {
@@ -355,6 +354,7 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+      this.getChannelData()
     },
     getChannelData() {
       list().then(response => {

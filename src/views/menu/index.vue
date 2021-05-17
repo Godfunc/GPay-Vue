@@ -82,9 +82,6 @@
                 <el-radio-button label="0">停用</el-radio-button>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="权限" prop="permissions">
-              <el-input v-model="temp.permissions" placeholder="多个权限用 , 分隔。例如：manage:menu,manage:user" />
-            </el-form-item>
             <el-form-item v-if="temp.type==1" label="图标" prop="icon">
               <el-popover
                 ref="iconListPopover"
@@ -109,13 +106,16 @@
               </el-popover>
               <el-input v-model="temp.icon" v-popover:iconListPopover :readonly="true" placeholder="图标" />
             </el-form-item>
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="temp.sort" :min="0" :max="9999" />
+            </el-form-item>
           </el-collapse-item>
           <el-collapse-item v-if="temp.type==1" name="2">
             <template slot="title">
               <el-link :underline="false" type="primary">高级设置</el-link>
             </template>
-            <el-form-item label="排序" prop="sort">
-              <el-input-number v-model="temp.sort" :min="0" :max="9999" />
+            <el-form-item label="权限" prop="permissions">
+              <el-input v-model="temp.permissions" placeholder="多个权限用 , 分隔。例如：manage:menu,manage:user" />
             </el-form-item>
             <el-form-item label="重定向">
               <el-input v-model="temp.redirect" />
