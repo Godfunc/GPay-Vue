@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
-export function riskList(merchantCode) {
+export function list(merchantCode) {
   return request({
     url: `/merchantRisk/list/${merchantCode}`,
     method: 'get'
   })
 }
 
-export function riskAdd(data) {
+export function add(data) {
   return request({
     url: '/merchantRisk/add',
     method: 'post',
@@ -15,7 +15,7 @@ export function riskAdd(data) {
   })
 }
 
-export function riskEdit(data) {
+export function edit(data) {
   return request({
     url: '/merchantRisk/edit',
     method: 'post',
@@ -23,7 +23,7 @@ export function riskEdit(data) {
   })
 }
 
-export function riskRemove(id) {
+export function remove(id) {
   return request({
     url: `/merchantRisk/remove/${id}`,
     method: 'post'
