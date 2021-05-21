@@ -38,7 +38,7 @@
       </el-table>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="40%">
-      <el-form ref="riskDataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
         <el-form-item label="单笔最大" prop="oneAmountMax">
           <el-input v-model="temp.oneAmountMax" placeholder="单笔最大限额" />
         </el-form-item>
@@ -134,6 +134,15 @@ export default {
     }
   },
   methods: {
+    handleRisk(merchantCode) {
+      this.loading = true
+      this.dialogVisible = true
+      this.merchantCode = merchantCode
+      list(merchantCode).then(response => {
+        this.list = response.data
+        this.loading = false
+      })
+    },
     resetTemp() {
       this.temp.id = undefined
       this.temp.merchantCode = this.merchantCode
@@ -164,7 +173,7 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-        this.$refs['riskDataForm'].clearValidate()
+        this.$refs['dataForm'].clearValidate()
       })
     },
     handleRiskUpdate(row) {
@@ -172,18 +181,18 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-        this.$refs['riskDataForm'].clearValidate()
+        this.$refs['dataForm'].clearValidate()
       })
     },
     createRiskData() {
       console.log(this.temp)
-      this.$refs['riskDataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.fixAmount()
           add(this.temp).then(response => {
             if (response.code === 0) {
               this.dialogFormVisible = false
-              this.handlerRisk(this.merchantCode)
+              this.handleRisk(this.merchantCode)
               this.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -194,13 +203,13 @@ export default {
       })
     },
     updateRiskData() {
-      this.$refs['riskDataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.fixAmount()
           edit(this.temp).then(response => {
             if (response.code === 0) {
               this.dialogFormVisible = false
-              this.handlerRisk(this.merchantCode)
+              this.handleRisk(this.merchantCode)
               this.$message({
                 type: 'success',
                 message: '修改成功!'
@@ -218,7 +227,7 @@ export default {
       }).then(() => {
         remove(id).then(response => {
           if (response.code === 0) {
-            this.handlerRisk(this.merchantCode)
+            this.handleRisk(this.merchantCode)
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -226,15 +235,6 @@ export default {
           }
         })
       }).catch(() => {
-      })
-    },
-    handlerRisk(merchantCode) {
-      this.loading = true
-      this.dialogVisible = true
-      this.merchantCode = merchantCode
-      list(merchantCode).then(response => {
-        this.list = response.data
-        this.loading = false
       })
     }
   }

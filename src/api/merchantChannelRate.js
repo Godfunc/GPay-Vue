@@ -8,6 +8,21 @@ export function page(page, limit, merchantCode, channelCode, categoryCode) {
   })
 }
 
+export function list(merchantCode) {
+  return request({
+    url: `/merchantChannelRate/list/${merchantCode}`,
+    method: 'get'
+  })
+}
+
+export function save(data) {
+  return request({
+    url: '/merchantChannelRate/save',
+    method: 'post',
+    data
+  })
+}
+
 export function add(data) {
   return request({
     url: '/merchantChannelRate/add',

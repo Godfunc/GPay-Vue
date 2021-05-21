@@ -64,7 +64,8 @@
       <el-table-column label="操作" align="center" width="171" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="'merchant:merchant:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:merchantRisk:list'" type="text" style="color: #e6a23c;" @click="handlerRisk(scope.row.code)">风控</el-button>
+          <el-button v-permission="'merchant:merchantRisk:list'" type="text" style="color: #e6a23c;" @click="handleRisk(scope.row.code)">风控</el-button>
+          <el-button v-permission="'merchant:merchantChannelRate:list'" type="text" style="color: #409eff;" @click="handleChannelRate(scope.row.code)">费率</el-button>
           <el-button v-permission="'merchant:merchant:keys'" type="text" style="color: #409eff;" @click="handleKeys(scope.row)">密钥</el-button>
           <el-button v-permission="'merchant:merchant:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
@@ -126,6 +127,7 @@
     </el-dialog>
     <keys ref="keys" />
     <merchant-risk ref="merchantRisk" />
+    <channel-rate ref="channelRate" />
   </div>
 </template>
 
@@ -135,12 +137,14 @@ import { list as getUserList } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import merchantRisk from './merchantRisk'
 import keys from './keys'
+import channelRate from './channelRate'
 
 export default {
   components: {
     Pagination,
     'keys': keys,
-    'merchant-risk': merchantRisk
+    'merchant-risk': merchantRisk,
+    'channel-rate': channelRate
   },
   filters: {
     statusFilter(status) {
@@ -223,8 +227,11 @@ export default {
     handleKeys(row) {
       this.$refs.keys.handleKeys(row)
     },
-    handlerRisk(merchantCode) {
-      this.$refs.merchantRisk.handlerRisk(merchantCode)
+    handleRisk(merchantCode) {
+      this.$refs.merchantRisk.handleRisk(merchantCode)
+    },
+    handleChannelRate(merchantCode) {
+      this.$refs.channelRate.handleList(merchantCode)
     },
     handleFilter() {
       this.listQuery.page = 1

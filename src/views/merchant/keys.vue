@@ -1,15 +1,15 @@
 <template>
   <el-dialog title="公钥" :visible.sync="dialogFormVisible" width="40%">
-    <el-form :model="keyTemp" label-position="left">
+    <el-form :model="temp" label-position="left">
       <el-form-item label="商户公钥" prop="publicKey">
-        <el-input v-model="keyTemp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
+        <el-input v-model="temp.publicKey" type="textarea" :rows="4" placeholder="商户公钥" />
       </el-form-item>
       <el-form-item label="平台公钥" prop="platPublicKey">
-        <el-input v-model="keyTemp.platPublicKey" type="textarea" :rows="4" placeholder="平台公钥" />
+        <el-input v-model="temp.platPublicKey" type="textarea" :rows="4" placeholder="平台公钥" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-permission="'merchant:merchant:refreshKeys'" type="primary" @click="refreshPlatKeys(keyTemp.id)">
+      <el-button v-permission="'merchant:merchant:refreshKeys'" type="primary" @click="refreshPlatKeys(temp.id)">
         刷新密钥
       </el-button>
     </div>
@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
-      keyTemp: {
+      temp: {
         id: undefined,
         publicKey: undefined,
         platPublicKey: undefined
@@ -32,9 +32,9 @@ export default {
   },
   methods: {
     handleKeys(row) {
-      this.keyTemp.publicKey = row.publicKey
-      this.keyTemp.platPublicKey = row.platPublicKey
-      this.keyTemp.id = row.id
+      this.temp.publicKey = row.publicKey
+      this.temp.platPublicKey = row.platPublicKey
+      this.temp.id = row.id
       this.dialogFormVisible = true
     },
     refreshPlatKeys(id) {
