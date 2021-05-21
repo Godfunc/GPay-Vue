@@ -70,7 +70,7 @@
       <el-table-column label="操作" align="center" width="135" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="'merchant:payChannel:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'merchant:channelRisk:listByChannel'" type="text" style="color: #e6a23c;" @click="handlerRisk(scope.row.id)">风控</el-button>
+          <el-button v-permission="'merchant:channelRisk:listByChannel'" type="text" style="color: #e6a23c;" @click="handleRisk(scope.row.id)">风控</el-button>
           <el-button v-permission="'merchant:channelRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -130,119 +130,22 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog title="风控" :visible.sync="dialogRiskVisible" width="60%">
-      <el-button size="small" style="margin-bottom: 5px;" class="filter-item" type="primary" icon="el-icon-edit" @click="handleRiskCreate">
-        新增
-      </el-button>
-      <el-table
-        v-loading="riskLoading"
-        :data="riskList"
-        element-loading-text="Loading"
-        border
-        fit
-      >
-        <el-table-column label="每日最大" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.dayAmountMax | riskCommonFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column label="单笔最大" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.oneAmountMax | riskCommonFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column label="单笔最小" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.oneAmountMin | riskCommonFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column label="单笔金额" align="center" width="80">
-          <template slot-scope="scope">
-            <template v-if="scope.row.oneAmount">
-              <el-tag
-                v-for="item in scope.row.oneAmount.split(',')"
-                :key="item"
-                type="success"
-              >{{ item }}</el-tag>
-            </template>
-            <template v-else>
-              {{ scope.row.oneAmount }}
-            </template>
-          </template>
-        </el-table-column>
-        <el-table-column property="dayStartTime" label="开始时间" align="center" />
-        <el-table-column property="dayEndTime" label="结束时间" align="center" />
-        <el-table-column class-name="status-col" label="状态" align="center">
-          <template slot-scope="scope">
-            <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column property="createTime" label="创建时间" align="center" />
-        <el-table-column label="操作" align="center" width="100" fixed="right">
-          <template slot-scope="scope">
-            <el-button v-permission="'merchant:channelRisk:edit'" type="text" style="color: #67c23a;" @click="handleRiskUpdate(scope.row)">修改</el-button>
-            <el-button v-permission="'merchant:channelRisk:remove'" type="text" style="color: #f56c6c;" @click="deleteRiskData(scope.row.id)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
-    <el-dialog :title="RiskTextMap[dialogRiskStatus]" :visible.sync="dialogRiskFormVisible" width="40%">
-      <el-form ref="riskDataForm" :rules="riskRules" :model="riskTemp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="每日最大" prop="dayAmountMax">
-          <el-input v-model="riskTemp.dayAmountMax" placeholder="每日最大限额" />
-        </el-form-item>
-        <el-form-item label="单笔最大" prop="oneAmountMax">
-          <el-input v-model="riskTemp.oneAmountMax" placeholder="单笔最大限额" />
-        </el-form-item>
-        <el-form-item label="单笔最小" prop="oneAmountMin">
-          <el-input v-model="riskTemp.oneAmountMin" placeholder="单笔最小限额" />
-        </el-form-item>
-        <el-form-item label="单笔金额" prop="oneAmount">
-          <el-input v-model="riskTemp.oneAmount" placeholder="指定单笔金额，多个用,分割" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="dayStartTime">
-          <el-time-picker
-            v-model="riskTemp.dayStartTime"
-            placeholder="交易开始时间"
-            value-format="HH:mm:ss"
-          />
-        </el-form-item>
-        <el-form-item label="结束时间" prop="dayStartTime">
-          <el-time-picker
-            v-model="riskTemp.dayEndTime"
-            placeholder="交易结束时间"
-            value-format="HH:mm:ss"
-          />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="riskTemp.status">
-            <el-radio-button :label="1">启用</el-radio-button>
-            <el-radio-button :label="0">停用</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogRiskFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogRiskStatus==='create'?createRiskData():updateRiskData()">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
+    <channel-risk ref="channelRisk" />
   </div>
 </template>
 
 <script>
 import { page, add, edit, remove } from '@/api/payChannel'
 import { list } from '@/api/payCategory'
-import { listByChannel, riskAdd, riskEdit, riskRemove } from '@/api/channelRisk'
 import { getByChannel } from '@/api/payCategoryChannel'
 import Pagination from '@/components/Pagination'
+import channelRisk from './channelRisk'
 
 export default {
-  components: { Pagination },
+  components: {
+    Pagination,
+    'channel-risk': channelRisk
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -257,13 +160,6 @@ export default {
         0: 'danger'
       }
       return statusMap[status]
-    },
-    riskCommonFilter(val) {
-      if (val) {
-        return val
-      } else {
-        return '不限额'
-      }
     }
   },
   data() {
@@ -272,21 +168,11 @@ export default {
         update: '修改',
         create: '新增'
       },
-      RiskTextMap: {
-        update: '修改',
-        create: '新增'
-      },
       dialogFormVisible: false,
-      dialogRiskFormVisible: false,
-      dialogRiskVisible: false,
-      riskChannelId: undefined,
       dialogStatus: '',
-      dialogRiskStatus: '',
       list: undefined,
       listLoading: true,
-      riskLoading: true,
       categoryList: undefined,
-      riskList: undefined,
       total: 0,
       listQuery: {
         page: 1,
@@ -308,17 +194,6 @@ export default {
         costRate: undefined,
         categoryIds: undefined
       },
-      riskTemp: {
-        id: undefined,
-        channelId: undefined,
-        dayAmountMax: undefined,
-        oneAmountMax: undefined,
-        oneAmountMin: undefined,
-        oneAmount: undefined,
-        dayStartTime: undefined,
-        dayEndTime: undefined,
-        status: undefined
-      },
       rules: {
         name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
         status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
@@ -326,11 +201,6 @@ export default {
         createUrl: [{ required: true, message: '下单网关不能为空', trigger: 'blur' }],
         logicalTag: [{ required: true, message: '逻辑标识不能为空', trigger: 'blur' }],
         costRate: [{ required: true, message: '费率不能为空', trigger: 'blur' }]
-      },
-      riskRules: {
-        dayStartTime: [{ required: true, message: '交易开始时间不能为空', trigger: 'blur' }],
-        dayEndTime: [{ required: true, message: '交易结束时间不能为空', trigger: 'blur' }],
-        status: [{ required: true, message: '状态不能为空', trigger: 'blur' }]
       }
     }
   },
@@ -410,115 +280,8 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    resetRiskTemp() {
-      this.riskTemp.id = undefined
-      this.riskTemp.channelId = this.riskChannelId
-      this.riskTemp.dayAmountMax = undefined
-      this.riskTemp.oneAmountMax = undefined
-      this.riskTemp.oneAmountMin = undefined
-      this.riskTemp.oneAmount = undefined
-      this.riskTemp.dayStartTime = undefined
-      this.riskTemp.dayEndTime = undefined
-      this.riskTemp.status = 1
-    },
-    setRiskUpdateTemp(row) {
-      this.riskTemp.id = row.id
-      this.riskTemp.channelId = row.channelId
-      this.riskTemp.dayAmountMax = row.dayAmountMax
-      this.riskTemp.oneAmountMax = row.oneAmountMax
-      this.riskTemp.oneAmountMin = row.oneAmountMin
-      this.riskTemp.oneAmount = row.oneAmount
-      this.riskTemp.dayStartTime = row.dayStartTime
-      this.riskTemp.dayEndTime = row.dayEndTime
-      this.riskTemp.status = row.status
-    },
-    fixAmount() {
-      if (this.riskTemp.dayAmountMax === '') {
-        this.riskTemp.dayAmountMax = undefined
-      }
-      if (this.riskTemp.oneAmountMax === '') {
-        this.riskTemp.oneAmountMax = undefined
-      }
-      if (this.riskTemp.oneAmountMin === '') {
-        this.riskTemp.oneAmountMin = undefined
-      }
-    },
-    handleRiskCreate() {
-      this.resetRiskTemp()
-      this.dialogRiskStatus = 'create'
-      this.dialogRiskFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['riskDataForm'].clearValidate()
-      })
-    },
-    handleRiskUpdate(row) {
-      this.setRiskUpdateTemp(row)
-      this.dialogRiskStatus = 'update'
-      this.dialogRiskFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['riskDataForm'].clearValidate()
-      })
-    },
-    createRiskData() {
-      this.$refs['riskDataForm'].validate((valid) => {
-        if (valid) {
-          this.fixAmount()
-          riskAdd(this.riskTemp).then(response => {
-            if (response.code === 0) {
-              this.dialogRiskFormVisible = false
-              this.handlerRisk(this.riskChannelId)
-              this.$message({
-                type: 'success',
-                message: '新增成功!'
-              })
-            }
-          })
-        }
-      })
-    },
-    updateRiskData() {
-      this.$refs['riskDataForm'].validate((valid) => {
-        if (valid) {
-          this.fixAmount()
-          riskEdit(this.riskTemp).then(response => {
-            if (response.code === 0) {
-              this.dialogRiskFormVisible = false
-              this.handlerRisk(this.riskChannelId)
-              this.$message({
-                type: 'success',
-                message: '修改成功!'
-              })
-            }
-          })
-        }
-      })
-    },
-    deleteRiskData(id) {
-      this.$confirm('确定删除该风控吗?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        riskRemove(id).then(response => {
-          if (response.code === 0) {
-            this.handlerRisk(this.riskChannelId)
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-          }
-        })
-      }).catch(() => {
-      })
-    },
-    handlerRisk(id) {
-      this.riskLoading = true
-      this.dialogRiskVisible = true
-      this.riskChannelId = id
-      listByChannel(id).then(response => {
-        this.riskList = response.data
-        this.riskLoading = false
-      })
+    handleRisk(id) {
+      this.$refs.channelRisk.handleRisk(id)
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {

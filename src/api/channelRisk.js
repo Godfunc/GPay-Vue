@@ -14,7 +14,7 @@ export function listByAccount(channelAccountId) {
   })
 }
 
-export function riskAdd(data) {
+export function add(data) {
   return request({
     url: '/channelRisk/add',
     method: 'post',
@@ -22,7 +22,7 @@ export function riskAdd(data) {
   })
 }
 
-export function riskEdit(data) {
+export function edit(data) {
   return request({
     url: '/channelRisk/edit',
     method: 'post',
@@ -30,7 +30,7 @@ export function riskEdit(data) {
   })
 }
 
-export function riskRemove(id) {
+export function remove(id) {
   return request({
     url: `/channelRisk/remove/${id}`,
     method: 'post'

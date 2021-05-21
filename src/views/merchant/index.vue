@@ -61,7 +61,7 @@
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="171" fixed="right">
+      <el-table-column label="操作" align="center" width="131" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="'merchant:merchant:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
           <el-button v-permission="'merchant:merchantRisk:list'" type="text" style="color: #e6a23c;" @click="handleRisk(scope.row.code)">风控</el-button>
