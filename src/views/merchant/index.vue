@@ -77,7 +77,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="用户" prop="userId">
+        <el-form-item v-show="dialogStatus == 'create'" label="用户" prop="userId">
           <el-select v-model="temp.userId" no-data-text="请先去【用户管理】创建用户" style="width: 100%" :disabled="dialogStatus == 'update'" placeholder="用户">
             <el-option
               v-for="item in userList"
@@ -86,6 +86,9 @@
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item v-show="dialogStatus == 'update'" label="用户" prop="username">
+          <el-input v-model="temp.username" placeholder="用户" :disabled="dialogStatus == 'update'" />
         </el-form-item>
         <el-form-item label="代理" prop="agentId">
           <el-select v-model="temp.agentId" style="width: 100%" :disabled="dialogStatus == 'update'" placeholder="请选择代理商户">
@@ -198,7 +201,8 @@ export default {
         name: undefined,
         publicKey: undefined,
         status: undefined,
-        type: undefined
+        type: undefined,
+        username: undefined
       },
       rules: {
         userId: [{ required: true, message: '请选择关联的用户', trigger: 'blur' }],
@@ -254,6 +258,7 @@ export default {
         userId: undefined,
         name: undefined,
         publicKey: undefined,
+        username: undefined,
         status: 1,
         type: 1
       }
@@ -274,6 +279,7 @@ export default {
       this.temp.publicKey = row.publicKey
       this.temp.status = row.status
       this.temp.type = row.type
+      this.temp.username = row.username
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
@@ -284,6 +290,7 @@ export default {
       })
     },
     createData() {
+      this.temp.username = undefined
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           add(this.temp).then(response => {
@@ -300,6 +307,7 @@ export default {
       })
     },
     updateData() {
+      this.temp.username = undefined
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           edit(this.temp).then(response => {
