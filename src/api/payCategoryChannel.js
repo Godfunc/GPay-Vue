@@ -7,9 +7,17 @@ export function getByChannel(channelId) {
   })
 }
 
-export function list() {
+export function list(payCategoryId) {
   return request({
     url: '/payCategoryChannel/list/',
-    method: 'get'
+    method: 'get',
+    params: { payCategoryId }
+  })
+}
+export function weight(data) {
+  return request({
+    url: '/payCategoryChannel/weight/',
+    method: 'post',
+    data
   })
 }

@@ -55,6 +55,7 @@
       <el-table-column label="操作" align="center" width="110" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="'merchant:payCategory:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:payCategoryChannel:list'" type="text" style="color: #67c23a;" @click="handleWeight(scope.row)">权重</el-button>
           <el-button v-permission="'merchant:payCategory:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -87,15 +88,20 @@
         </el-button>
       </div>
     </el-dialog>
+    <channel-weight ref="channelWeight" />
   </div>
 </template>
 
 <script>
 import { page, add, edit, remove } from '@/api/payCategory'
 import Pagination from '@/components/Pagination'
+import channelWeight from './channelWeight'
 
 export default {
-  components: { Pagination },
+  components: {
+    Pagination,
+    'channel-weight': channelWeight
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -190,6 +196,9 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    handleWeight(row) {
+      this.$refs.channelWeight.handleList(row.categoryId)
     },
     createData() {
       console.log(this.temp)
