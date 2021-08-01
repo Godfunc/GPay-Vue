@@ -185,7 +185,6 @@ export default {
       })
     },
     createRiskData() {
-      console.log(this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.fixAmount()

@@ -201,7 +201,6 @@ export default {
       this.$refs.channelWeight.handleList(row.categoryId)
     },
     createData() {
-      console.log(this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           add(this.temp).then(response => {

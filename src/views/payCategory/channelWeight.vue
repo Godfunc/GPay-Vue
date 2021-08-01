@@ -48,7 +48,6 @@ export default {
       this.dialogFormVisible = true
     },
     setWeight(data) {
-      console.log(data)
       weight(data).then(response => {
         if (response.code === 0) {
           this.handleList(this.payCategoryId)

@@ -76,22 +76,25 @@
         <template slot-scope="scope">
           <el-button v-permission="'merchant:order:updatePaid'" style="color: #67c23a;" type="text" @click="handlePaid(scope.row)">补单</el-button>
           <el-button v-permission="'merchant:order:notify'" type="text" style="color: #e6a23c;" @click="handleNotifyMerchant(scope.row)">通知</el-button>
+          <el-button v-permission="'merchant:orderLog:page'" type="text" style="color: #e6a23c;" @click="handleOrderLog(scope.row)">日志</el-button>
         </template>
       </el-table-column>
 
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
+    <order-log ref="orderLog" />
   </div>
 </template>
 
 <script>
 import { page, updatePaid, notifyMerchant } from '@/api/order'
 import Pagination from '@/components/Pagination'
+import orderLog from './orderLog.vue'
 
 export default {
   components: {
-    Pagination
+    Pagination,
+    'order-log': orderLog
   },
   filters: {
     statusFilter(status) {
@@ -176,8 +179,10 @@ export default {
           })
         })
         .catch(_ => {})
+    },
+    handleOrderLog(row) {
+      this.$refs.orderLog.page(row.id)
     }
-
   }
 }
 </script>
