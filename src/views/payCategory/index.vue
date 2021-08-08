@@ -198,7 +198,7 @@ export default {
       })
     },
     handleWeight(row) {
-      this.$refs.channelWeight.handleList(row.categoryId)
+      this.$refs.channelWeight.handleList(row.id)
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
