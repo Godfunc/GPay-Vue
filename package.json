@@ -1,9 +1,10 @@
 {
-  "name": "GPay-Vue",
+
+  "name": "gpay-vue",
   "version": "1.0.0",
   "description": "GPay-Vue",
   "author": "Godfnc <godfunc@outlook.com>",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
@@ -13,7 +14,7 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "0.21.1",
     "core-js": "3.6.5",
     "element-ui": "2.13.2",
     "js-cookie": "2.2.0",

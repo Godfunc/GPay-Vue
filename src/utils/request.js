@@ -48,6 +48,8 @@ service.interceptors.response.use(
     // if the custom code is not 0, it is judged as an error.
     if (res.code !== 0) {
       Message({
+        dangerouslyUseHTMLString: true,
+        showClose: true,
         message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000

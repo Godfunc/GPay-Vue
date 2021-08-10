@@ -1,11 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" v-permission="'mg:role:page'" clearable placeholder="角色名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves v-permission="'mg:role:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="listQuery.name" v-permission="'merchant:payCategory:page'" clearable placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.code" v-permission="'merchant:payCategory:page'" clearable placeholder="编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.status" v-permission="'merchant:payCategory:page'" placeholder="状态" clearable style="width: 90px" class="filter-item">
+        <el-option key="1" label="启用" value="1" />
+        <el-option key="0" label="停用" value="0" />
+      </el-select>
+      <el-button v-waves v-permission="'merchant:payCategory:page'" class="filter-item" type="info" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-permission="'mg:role:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="'merchant:payCategory:add'" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -22,24 +27,19 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="角色名" align="center">
+      <el-table-column label="名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center">
+      <el-table-column label="编号" align="center">
         <template slot-scope="scope">
-          {{ scope.row.createUser }}
+          {{ scope.row.code }}
         </template>
       </el-table-column>
-      <el-table-column label="修改人" align="center">
+      <el-table-column class-name="status-col" label="状态" width="100" align="center">
         <template slot-scope="scope">
-          {{ scope.row.updateUser }}
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.remark }}
+          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="160" align="center">
@@ -52,10 +52,11 @@
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" fixed="right">
+      <el-table-column label="操作" align="center" width="110" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="'mg:role:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
-          <el-button v-permission="'mg:role:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
+          <el-button v-permission="'merchant:payCategory:edit'" type="text" style="color: #67c23a;" @click="handleupdate(scope.row)">修改</el-button>
+          <el-button v-permission="'merchant:payCategoryChannel:list'" type="text" style="color: #67c23a;" @click="handleWeight(scope.row)">权重</el-button>
+          <el-button v-permission="'merchant:payCategory:remove'" type="text" style="color: #f56c6c;" @click="deleteData(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -65,21 +66,17 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="角色名" prop="name">
-          <el-input v-model="temp.name" placeholder="角色名" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name" placeholder="商户名" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="temp.remark" placeholder="备注" />
+        <el-form-item label="编号" prop="code">
+          <el-input v-model="temp.code" placeholder="编号" />
         </el-form-item>
-        <el-form-item label="菜单权限">
-          <el-tree
-            ref="menuTree"
-            :data="menuList"
-            show-checkbox
-            node-key="id"
-            accordion
-            :props="{ children: 'children', label: 'name' }"
-          />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="temp.status">
+            <el-radio-button :label="1">启用</el-radio-button>
+            <el-radio-button :label="0">停用</el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -91,16 +88,36 @@
         </el-button>
       </div>
     </el-dialog>
+    <channel-weight ref="channelWeight" />
   </div>
 </template>
 
 <script>
-import { getTree } from '@/api/menu'
-import { page, edit, add, remove, getMenus } from '@/api/role'
+import { page, add, edit, remove } from '@/api/payCategory'
 import Pagination from '@/components/Pagination'
+import channelWeight from './channelWeight'
 
 export default {
-  components: { Pagination },
+  components: {
+    Pagination,
+    'channel-weight': channelWeight
+  },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        1: '启用',
+        0: '停用'
+      }
+      return statusMap[status]
+    },
+    statusTypeFilter(status) {
+      const statusMap = {
+        1: 'success',
+        0: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   data() {
     return {
       textMap: {
@@ -115,17 +132,20 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        name: undefined
+        status: undefined,
+        name: undefined,
+        code: undefined
       },
-      menuList: undefined,
       temp: {
         id: undefined,
         name: undefined,
-        remark: undefined,
-        menus: undefined
+        status: undefined,
+        code: undefined
       },
       rules: {
-        name: [{ required: true, message: '角色名不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '商户名不能为空', trigger: 'blur' }],
+        status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
+        code: [{ required: true, message: '编号不能为空', trigger: 'blur' }]
       }
     }
   },
@@ -135,26 +155,12 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      page(this.listQuery.page, this.listQuery.limit, this.listQuery.name ? this.listQuery.name : undefined).then(response => {
+      page(this.listQuery.page, this.listQuery.limit, this.listQuery.status, this.listQuery.name ? this.listQuery.name : undefined, this.listQuery.code ? this.listQuery.code : undefined).then(response => {
         if (response.data) {
           this.list = response.data.list
         }
         this.total = response.data.total
         this.listLoading = false
-      })
-    },
-    getMenuTree() {
-      getTree().then(response => {
-        this.menuList = response.data
-        if (this.dialogStatus === 'update') {
-          getMenus(this.temp.id).then(response => {
-            if (response.data) {
-              response.data.forEach(item => this.$refs.menuTree.setChecked(item, true))
-            }
-          })
-        } else {
-          this.$refs.menuTree.setCheckedKeys([])
-        }
       })
     },
     handleFilter() {
@@ -165,16 +171,14 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        remark: undefined,
-        menus: undefined
+        status: 1,
+        code: undefined
       }
     },
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
-      this.getMenuTree()
       this.dialogFormVisible = true
-
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -182,23 +186,23 @@ export default {
     setUpdateTemp(row) {
       this.temp.id = row.id
       this.temp.name = row.name
-      this.temp.remark = row.remark
-      this.temp.menus = undefined
+      this.temp.status = row.status
+      this.temp.code = row.code
     },
     handleupdate(row) {
       this.setUpdateTemp(row)
       this.dialogStatus = 'update'
-      this.getMenuTree()
       this.dialogFormVisible = true
-
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    handleWeight(row) {
+      this.$refs.channelWeight.handleList(row.id)
+    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.menus = [...this.$refs.menuTree.getCheckedKeys(), ...this.$refs.menuTree.getHalfCheckedKeys()]
           add(this.temp).then(response => {
             if (response.code === 0) {
               this.dialogFormVisible = false
@@ -215,7 +219,6 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.menus = [...this.$refs.menuTree.getHalfCheckedKeys(), ...this.$refs.menuTree.getCheckedKeys()]
           edit(this.temp).then(response => {
             if (response.code === 0) {
               this.dialogFormVisible = false
@@ -230,7 +233,7 @@ export default {
       })
     },
     deleteData(id) {
-      this.$confirm('确定删除该用户吗?', '警告', {
+      this.$confirm('确定删除该渠道主类吗?该渠道关联的商户费率等数据也将被删除', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -15,6 +15,13 @@ export function page(page, limit, status, username) {
   })
 }
 
+export function list() {
+  return request({
+    url: '/user/list',
+    method: 'get'
+  })
+}
+
 export function add(data) {
   return request({
     url: '/user/add',
