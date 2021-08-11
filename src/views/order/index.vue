@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" v-permission="'merchant:order:page'" clearable placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.outTradeNo" v-permission="'merchant:order:page'" clearable placeholder="商户单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.orderNo" v-permission="'merchant:order:page'" clearable placeholder="平台单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.payType" v-permission="'merchant:order:page'" clearable placeholder="支付类型" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -36,7 +35,7 @@
           商户号：{{ scope.row.merchantCode }}
         </template>
       </el-table-column>
-      <el-table-column label="单号" align="left" :show-overflow-tooltip="true" width="200">
+      <el-table-column label="单号" align="left" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           商户单号：{{ scope.row.outTradeNo }} <br>
           平台单号：{{ scope.row.orderNo }}<br>
@@ -48,12 +47,12 @@
           {{ scope.row.channelAccountCode }}
         </template>
       </el-table-column>
-      <el-table-column label="支付类型" :show-overflow-tooltip="true" align="center">
+      <el-table-column label="支付类型" :show-overflow-tooltip="true" align="center" width="120">
         <template slot-scope="scope">
           {{ scope.row.payType }}
         </template>
       </el-table-column>
-      <el-table-column label="金额" align="center">
+      <el-table-column label="金额" align="left" width="150">
         <template slot-scope="scope">
           订单金额：{{ scope.row.amount }}<br>
           实际金额：{{ scope.row.realAmount }}
@@ -64,7 +63,7 @@
           <el-tag :type="scope.row.status | statusTypeFilter">  {{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="时间" width="200" align="center">
+      <el-table-column label="时间" width="200" align="left">
         <template slot-scope="scope">
           创建：{{ scope.row.createTime }}<br>
           下单：{{ scope.row.clientCreateTime }}<br>

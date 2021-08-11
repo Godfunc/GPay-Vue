@@ -13,6 +13,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="理由" :show-overflow-tooltip="true" />
+        <el-table-column prop="createTime" label="创建时间" :show-overflow-tooltip="true" />
         <el-table-column prop="result" label="结果" align="center" width="90">
           <template slot-scope="scope">
             <el-tag :type="scope.row.result | resultTypeFilter">  {{ scope.row.result | resultFilter }}</el-tag>
