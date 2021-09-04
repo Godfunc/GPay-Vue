@@ -21,3 +21,11 @@ export function notifyMerchant(id) {
     method: 'post'
   })
 }
+
+export function createOrder(data) {
+  return request({
+    url: '/order/createOrder/',
+    method: 'post',
+    data
+  })
+}
