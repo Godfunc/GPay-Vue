@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog title="风控" :visible.sync="dialogVisible" width="60%">
-      <el-button size="small" style="margin-bottom: 5px;" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="'merchant:channelRisk:add'" size="small" style="margin-bottom: 5px;" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
       <el-table
