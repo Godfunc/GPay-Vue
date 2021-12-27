@@ -50,7 +50,7 @@ service.interceptors.response.use(
       Message({
         dangerouslyUseHTMLString: true,
         showClose: true,
-        message: res.msg || 'Error',
+        message: res.msg.replaceAll(',', '<br>') || 'Error',
         type: 'error',
         duration: 5 * 1000
       })

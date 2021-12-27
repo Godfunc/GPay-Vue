@@ -36,8 +36,7 @@
       </el-table-column>
       <el-table-column label="图标" align="center">
         <template slot-scope="scope">
-          <span><svg-icon :icon-class="scope.row.icon" /></span>
-        </template>
+          <span v-if="scope.row.icon"><svg-icon :icon-class="scope.row.icon" /></span>        </template>
       </el-table-column>
       <el-table-column label="隐藏" align="center" width="80">
         <template slot-scope="scope">

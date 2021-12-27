@@ -89,8 +89,8 @@ export default {
       }
     }
     const validateCaptcha = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('请输入五位数验证码'))
+      if (value.length < 1) {
+        callback(new Error('请输入验证码'))
       } else {
         callback()
       }
