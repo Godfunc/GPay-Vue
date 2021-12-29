@@ -45,7 +45,7 @@
           上游单号：{{ scope.row.tradeNo }}
         </template>
       </el-table-column>
-      <el-table-column label="渠道" :show-overflow-tooltip="true" align="center">
+      <el-table-column label="渠道账号" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
           {{ scope.row.channelAccountCode }}
         </template>

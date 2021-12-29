@@ -67,7 +67,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 80%; margin-left:50px;">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name" placeholder="商户名" />
+          <el-input v-model="temp.name" placeholder="名称" />
         </el-form-item>
         <el-form-item label="编号" prop="code">
           <el-input v-model="temp.code" placeholder="编号" />

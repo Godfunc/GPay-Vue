@@ -324,7 +324,7 @@ export default {
       })
     },
     deleteData(id) {
-      this.$confirm('确定删除该商户吗?', '警告', {
+      this.$confirm('确定删除该商户吗（商户关联的账号也会被删除）?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

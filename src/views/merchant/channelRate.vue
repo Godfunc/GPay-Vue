@@ -13,7 +13,7 @@
             <el-table-column prop="payChannelName" label="渠道子类名称" />
             <el-table-column label="费率">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.rate" placeholder="费率" />
+                <el-input v-model="scope.row.rate" placeholder="该费率需要大于代理得费率或者平台通道费率" />
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">

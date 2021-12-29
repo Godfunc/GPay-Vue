@@ -112,7 +112,7 @@
           <el-input v-model="temp.logicalTag" placeholder="逻辑标识" />
         </el-form-item>
         <el-form-item label="费率" prop="costRate">
-          <el-input v-model="temp.costRate" placeholder="费率" />
+          <el-input v-model="temp.costRate" placeholder="通道成本费率" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="temp.status">
